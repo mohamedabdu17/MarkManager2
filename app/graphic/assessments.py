@@ -1,22 +1,27 @@
 import customtkinter as ctk
-from PIL import Image
-from constants import markColor
-from app.logic.database_manager import fetchAssessments, fetchCourses
-from main import coursesBoldFont, boldFont, contentFrame
+from config import frame_color
+from utils import mark_color
+from app.assets.ctk_assets.fonts import get_fonts
+from app.logic.database_manager import fetchAssessments
 
-def display_assessments(code):
+def display_assessments(parent, code):
+    global boldFont, buttonBoldFont, coursesBoldFont, popupBoldFont
+    boldFont, buttonBoldFont, coursesBoldFont, popupBoldFont = get_fonts()
+    for i in parent.winfo_children(): # Clear the parent frame before displaying assessments
+        i.destroy()
+
     assessments = fetchAssessments(code)
     if not assessments:
-        noEvalLabel = ctk.CTkLabel(master=contentFrame, text="No assessments available", font=boldFont)
-        noEvalLabel.pack(pady=225)
+        noAssessLabel = ctk.CTkLabel(master=parent, text="No assessments available", font=boldFont)
+        noAssessLabel.pack(pady=225)
     else:
         dividerText = "Name".ljust(93) + "Weight".ljust(20) + "Grade"
-        nameLabel = ctk.CTkLabel(master=contentFrame, text=dividerText, font=coursesBoldFont)
+        nameLabel = ctk.CTkLabel(master=parent, text=dividerText, font=coursesBoldFont)
         nameLabel.pack(padx=10)
-        for assess in assessments:
-            name, mark, weight = assess
+        for assessment in assessments:
+            name, mark, weight = assessment # Unpacks tuple returned from fetchAssessments()
 
-            assessFrame = ctk.CTkFrame(master=contentFrame, height=100, corner_radius=20, fg_color="#333333")
+            assessFrame = ctk.CTkFrame(master=parent, height=100, corner_radius=20, fg_color=frame_color)
             assessFrame.pack(fill="x",pady=10, padx=10)
 
             markLabel = ctk.CTkLabel(master=assessFrame, text=f"{mark}%", font=coursesBoldFont)
@@ -28,4 +33,4 @@ def display_assessments(code):
             courseLabel = ctk.CTkLabel(master=assessFrame, text=f"{name}", font=coursesBoldFont)
             courseLabel.pack(pady=15, padx=15, anchor="nw")
 
-            markColor(markLabel, mark)
+            mark_color(markLabel, mark)

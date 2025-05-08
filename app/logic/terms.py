@@ -1,4 +1,4 @@
-from database_manager import getSemesters
+from app.logic.database_manager import getSemesters
 semesters = []
 
 def handle_semesters(option):

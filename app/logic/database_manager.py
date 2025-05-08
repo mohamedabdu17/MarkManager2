@@ -1,11 +1,11 @@
 import sqlite3
 from contextlib import contextmanager
+from config import GPA_SCALE
 
 
-con = sqlite3.connect("db/courses.db")
+con = sqlite3.connect("app/db/courses.db")
 cursor = con.cursor()
 
-# Add a course given a course code and title
 def addCourse(courseCode, courseTitle, semester=None):
     if semester: # If a semester is given, put that course into that semester
         cursor.execute("INSERT INTO courses(code, title, semester) VALUES (?, ?, ?);", (courseCode, courseTitle, semester))
@@ -63,52 +63,17 @@ def updateGPA():
         average = cursor.fetchone()
 
         if average[0] is not None:
-            if 90 <= average[0] <= 100:
-                letterGrade = "A+"
-                gpa = 4.33
-            elif 85 <= average[0] <= 90:
-                letterGrade = "A"
-                gpa = 4.00
-            elif 80 <= average[0] <= 85:
-                letterGrade = "A-"
-                gpa = 3.67
-            elif 77 <= average[0] <= 80:
-                letterGrade = "B+"
-                gpa = 3.33
-            elif 73 <= average[0] <= 77:
-                letterGrade = "B"
-                gpa = 3.00
-            elif 70 <= average[0] <= 73:
-                letterGrade = "B-"
-                gpa = 2.67
-            elif 67 <= average[0] <= 70:
-                letterGrade = "C+"
-                gpa = 2.33
-            elif 63 <= average[0] <= 67:
-                letterGrade = "C"
-                gpa = 2.00
-            elif 60 <= average[0] <= 63:
-                letterGrade = "C-"
-                gpa = 1.67
-            elif 57 <= average[0] <= 60:
-                letterGrade = "D+"
-                gpa = 1.33
-            elif 53 <= average[0] <= 57:
-                letterGrade = "D"
-                gpa = 1.00
-            elif 50 <= average[0] <= 53:
-                letterGrade = "D-"
-                gpa = 0.67
-            elif 0 <= average[0] <= 50:
-                letterGrade = "F"
-                gpa = 0.00
+            for scale in GPA_SCALE:
+                if scale["min"] <= average[0] <= scale["max"]:
+                    letterGrade = scale["letter"]
+                    gpa = scale["gpa"]  
+                    break
             cursor.execute("UPDATE courses SET letterGrade = ? WHERE code = ?", (letterGrade, courseCode))
             cursor.execute("UPDATE courses SET gpa = ? WHERE code = ?", (gpa, courseCode))
         else:
             cursor.execute("UPDATE courses SET letterGrade = ? WHERE code = ?;", ("No Grade Available", courseCode))
             cursor.execute("UPDATE courses SET gpa = ? WHERE code = ?;", ("No GPA Available", courseCode))
     con.commit()
-
 
 def editSemester(course, current, new):
     cursor.execute("UPDATE courses SET semester = ? WHERE code = ? AND semester = ?;", (new, course, current))

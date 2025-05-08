@@ -1,15 +1,7 @@
-# This file contains constants used in the application.
-# It includes the application name, version, and file paths for icons and images.
-# The constants are used throughout the application to maintain consistency and avoid hardcoding values.
-# Constants for the application
 import customtkinter as ctk
-from PIL import Image
+from config import GPA_SCALE
 
-APP_NAME = "MarkManager"
-DEFAULT_WINDOW_SIZE = "1280x720"
-
-# GRAPHIC ASSETS
-def markColor(markLabel, average):
+def mark_color(markLabel, average):
     if average is None:
         markLabel.configure(text="No Marks Available")
     elif 100 >= average >= 90:
@@ -23,4 +15,8 @@ def markColor(markLabel, average):
     elif 60 >= average >= 50:
         markLabel.configure(text_color="#c91c1c")
     elif 49 <= average:
-        markLabel.configure(text_color="c91c1c")
+        markLabel.configure(text_color="gray")
+
+def update_GPA_SCALE(new_scale: list[dict]):
+    GPA_SCALE.clear()
+    GPA_SCALE.extend(new_scale)
