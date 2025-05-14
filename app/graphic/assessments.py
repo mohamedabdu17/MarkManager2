@@ -1,14 +1,24 @@
 import customtkinter as ctk
-from config import frame_color
+from config import frame_color, button_fg, button_hover
 from utils import mark_color
 from app.assets.ctk_assets.fonts import get_fonts
+from app.assets.ctk_assets.icons import get_icons
 from app.logic.database_manager import fetchAssessments
 
 def display_assessments(parent, code):
     global boldFont, buttonBoldFont, coursesBoldFont, popupBoldFont
+    global backArrow, crossIcon
+    
     boldFont, buttonBoldFont, coursesBoldFont, popupBoldFont = get_fonts()
+    backArrow, crossIcon = get_icons()
+
     for i in parent.winfo_children(): # Clear the parent frame before displaying assessments
         i.destroy()
+    
+    from app.graphic.courses import display_courses
+    backButton = ctk.CTkButton(master=parent, image=backArrow, text="", font=buttonBoldFont, 
+                               fg_color=button_fg, hover_color=button_hover, command=lambda: display_courses(parent))
+    backButton.place(relx=0.01, rely=0.01, relwidth=0.05, relheight=0.05)
 
     assessments = fetchAssessments(code)
     if not assessments:

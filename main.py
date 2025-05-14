@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from config import APP_NAME, DEFAULT_WINDOW_SIZE
-from app.logic.terms import handle_semesters
+from app.logic.term_manager import handle_semesters
 from app.assets.ctk_assets.fonts import get_fonts
 from app.graphic.courses import display_courses
 from app.graphic.finals_calculator import display_finals_calculator

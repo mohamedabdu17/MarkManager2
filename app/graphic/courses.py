@@ -3,9 +3,9 @@ from config import button_fg, button_hover, frame_color
 from utils import mark_color
 from app.assets.ctk_assets.fonts import get_fonts
 from app.assets.ctk_assets.icons import get_icons
-from app.graphic.assessments import display_assessments
+from app.graphic.semester_selector import display_semester_selector
 from app.logic.database_manager import fetchCourses
-from app.logic.terms import get_current_semester
+from app.logic.term_manager import get_current_semester
 
 def display_courses(parent):
     global boldFont, buttonBoldFont, coursesBoldFont, popupBoldFont
@@ -15,9 +15,10 @@ def display_courses(parent):
     for i in parent.winfo_children():
         i.destroy()
 
+    display_semester_selector(parent)
+
     coursesTitle = ctk.CTkLabel(master=parent, text="Courses", font=boldFont)
     coursesTitle.pack(pady=20)
-
 
     courses = fetchCourses()
     if not courses:
@@ -38,6 +39,7 @@ def display_courses(parent):
                 courseLabel = ctk.CTkLabel(master=courseFrame, text=f"{code} - {title}", font=coursesBoldFont)
                 courseLabel.pack(pady=15, padx=15, anchor="nw")
 
+                from app.graphic.assessments import display_assessments
                 openCourseButton = ctk.CTkButton(master=courseFrame, text="Open Course", font=buttonBoldFont,
                                                  fg_color=button_fg, hover_color=button_hover,
                                                  command=lambda courseCode=code: display_assessments(parent, courseCode))

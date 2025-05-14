@@ -16,3 +16,6 @@ def handle_semesters(option):
 
 def get_current_semester():
     return currentSemester
+
+def get_semesters():
+    return semesters
